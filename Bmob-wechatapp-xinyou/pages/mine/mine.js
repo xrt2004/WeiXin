@@ -25,7 +25,8 @@ Page({
         wx.getStorage({
           key: 'user_id',
           success: function(ress) {
-            if(ress.data){
+            if(ress.data)
+            {
               clearInterval(myInterval)
               wx.getStorage({
                 key: 'my_avatar',
@@ -35,7 +36,7 @@ Page({
                       loading:true
                   })
                 } 
-              })
+              })//end  wx.getStorage
               wx.getStorage({
                 key: 'my_nick',
                 success: function(res) {
@@ -45,59 +46,39 @@ Page({
                     
                   })
                 } 
-              })
+              })//end  wx.getStorage
               var newsLen=0;
-              // wx.request({
-              //   url: '',
-              //   header:{
-              //     "sessionKey":ress.data
-              //   },
-              //   data: {
-              //     "count": 1000
-              //   },
-              //   method:"GET",
-              //   success: function(res) {
-              //     if(res.data.error_code=="0"){
-              //       for(var i=0;i<res.data.result.length;i++){
-              //         if(res.data.result[i].is_read=="0"){
-              //           newsLen=newsLen+1;
-              //         }     
-              //       }
-              //       that.setData({
-              //         remindscount:newsLen
-                      
-              //       })
-              //       wx.setStorageSync('remindscount',newsLen) 
-              //     }
-              //     else{
-              //       common.dataLoading(res.data.error,"loading");
-              //     }
-                  
-              //   }
-              // })
+            
             }
             
           } 
-        })   
+        })  //wx.getStorage 
         
     }
     
-  },
-  modifyImg:function(){//修改头像
+  }  //end onshow()
+  ,
+  modifyImg:function(){//修改头像,弹出 相册，拍照，取消框
     wx.getStorage({
       key: 'user_id',
       success: function(ress) {
           var key=ress.data
-          if(key){
+          if(key)
+          {
             wx.showActionSheet({
             itemList: ['相册', '拍照'],
             success: function(res) {
-              if (!res.cancel) {
+
+              //=================如果不是Cancel==================
+              if (!res.cancel) 
+              {
                 var sourceType=[];
-                if(res.tapIndex==0){
+                if(res.tapIndex==0)
+                {
                   sourceType=['album']//从相册选择
                 }
-                else if(res.tapIndex==1){
+                else if(res.tapIndex==1)
+                {
                   sourceType=['camera']//拍照
                 }
                 wx.chooseImage({
@@ -114,21 +95,26 @@ Page({
                           var name=tempFilePaths;//上传的图片的别名
                           var file=new Bmob.File(name,tempFilePaths);
                           file.save().then(function(resu){
+                            //将上传的路径保持在缓存中
                             wx.setStorageSync('my_avatar',resu.url());
                             that.setData({
                               upImg:true
                             });
                             var newImge=resu.url();
+                            //从缓存中得到用户名
                             wx.getStorage({
                               key: 'my_username',
                               success: function(ress) {
                                 var my_username=ress.data;
+
                                 wx.getStorage({
                                   key: 'user_openid',
                                   success: function(openid) {
                                     var openid=openid.data
+                                    //-------从Bomb中根据openid 找到用户信息-----------
                                     var user = Bmob.User.logIn(my_username,openid, {
                                       success: function(users) {
+                                        //修改用户的图片
                                         users.set('userPic', newImge);  // attempt to change username
                                         users.save(null, {
                                           success: function(user) {
@@ -137,18 +123,19 @@ Page({
                                             })
                                             common.dataLoading("修改头像成功","success");
                                           }
-                                        });
+                                        }); //end  users.save
                                       }
-                                    });
-                                  },function(error){
+                                    });//----------找到用户信息----------------
+                                  },
+                                  function(error){    //如果缓存中没找到 user_openid
                                     console.log(error);
                                   }
                                 })
-                              },function(error){
+                              },function(error){    //如果缓存中没找到 my_username
                                 console.log(error);
                               }
                             })
-                          },function(error){
+                          },function(error){    //Bmob 保存文件失败
                             that.setData({
                               upImg:true
                             })
@@ -159,9 +146,9 @@ Page({
                       
                     }
                   })
-              }
+              }   //  end if ===============================
             }
-          })
+          })   //end showActionSheet
           }
           
       } 
