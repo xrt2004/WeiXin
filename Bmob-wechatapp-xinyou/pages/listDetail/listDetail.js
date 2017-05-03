@@ -42,6 +42,8 @@ Page({
                 query.include("publisher");
                 query.find({
                     success: function(result) {
+                    
+                      //  console.log(" id===="+result[0].id);
                       var title=result[0].get("title");
                       var content=result[0].get("content");
                       var publisher=result[0].get("publisher");
@@ -122,11 +124,14 @@ Page({
       commentlist=new Array();
       var Comments = Bmob.Object.extend("Comments");
       var queryComment = new Bmob.Query(Comments);
-      queryComment.equalTo("mood", mood);
+      queryComment.equalTo("mood", mood.id);
+
+     //  console.log("title===="+mood.id);
       queryComment.include("publisher");
-      queryComment.descending("createdAt");
+     queryComment.descending("createdAt");
       queryComment.find({
           success: function(result) {
+             console.log("result.length===="+result.length);
             for(var i=0;i<result.length;i++){
               var id=result[i].id;
               var pid=result[i].get("olderComment");

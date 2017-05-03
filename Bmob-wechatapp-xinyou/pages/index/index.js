@@ -51,6 +51,7 @@ Page({
                           that.setData({
                               loading: true
                             });
+                            molist=[];
                           for (var i = 0; i < results.length; i++) {
                             var jsonA;
                             var title=results[i].get("title");
